@@ -5,8 +5,12 @@ import 'package:quy_dao/core/theme/app_tokens.dart';
 import 'package:quy_dao/core/widgets/amount_text.dart';
 import 'package:quy_dao/core/widgets/budget_bar.dart';
 import 'package:quy_dao/core/widgets/category_avatar.dart';
+import 'package:quy_dao/core/widgets/empty_state_view.dart';
 import 'package:quy_dao/data/models/category.dart';
-import 'package:quy_dao/data/repositories/app_mock_providers.dart';
+import 'package:quy_dao/data/providers/app_state_providers.dart';
+import 'package:quy_dao/data/repositories/app_providers.dart';
+import 'package:quy_dao/data/repositories/budget_repository.dart';
+import 'package:quy_dao/features/budgets/presentation/set_budget_sheet.dart';
 
 class BudgetsScreen extends ConsumerWidget {
   const BudgetsScreen({super.key});
@@ -25,13 +29,58 @@ class BudgetsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppTokens.canvasCream,
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_budgets',
+        backgroundColor: AppTokens.inkBlack,
+        foregroundColor: AppTokens.canvasCream,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+        ),
+        icon: const Icon(Icons.add, size: 20.0),
+        label: const Text(
+          AppStrings.setBudget,
+          style: TextStyle(
+            fontFamily: AppTokens.fontFamilyPrimary,
+            fontWeight: AppTokens.weightMedium,
+          ),
+        ),
+        onPressed: () => SetBudgetSheet.show(context),
+      ),
       appBar: AppBar(
         title: const Text(AppStrings.tabBudgets),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.copy_outlined, size: 20.0),
             tooltip: AppStrings.copyFromLastMonth,
-            onPressed: () {},
+            onPressed: () async {
+              final uid = ref.read(currentUidProvider);
+              if (uid != null) {
+                final currentMonth = ref.read(currentMonthKeyProvider);
+                // Tìm month trước
+                final parts = currentMonth.split('-');
+                final year = int.parse(parts[0]);
+                final month = int.parse(parts[1]);
+                final prevDate = DateTime(year, month - 1, 1);
+                final prevMonth =
+                    '${prevDate.year.toString().padLeft(4, '0')}-${prevDate.month.toString().padLeft(2, '0')}';
+
+                await ref
+                    .read(budgetRepositoryProvider)
+                    .copyFromPreviousMonth(
+                      uid,
+                      fromMonthKey: prevMonth,
+                      toMonthKey: currentMonth,
+                    );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Đã sao chép ngân sách từ tháng trước!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              }
+            },
           ),
         ],
       ),
@@ -160,70 +209,120 @@ class BudgetsScreen extends ConsumerWidget {
             ),
 
             // Danh sách các danh mục ngân sách
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.space24,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final budget = budgets[index];
-                  final cat = categories.firstWhere(
-                    (c) => c.id == budget.categoryId,
-                    orElse: () => const Category(
-                      id: '',
-                      name: 'Khác',
-                      type: 'expense',
-                      icon: 'category',
-                      colorToken: 'slateGray',
-                    ),
-                  );
-
-                  final spent = summary.byCategory[budget.categoryId] ?? 0;
-                  final remaining = budget.plannedAmount - spent;
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: AppTokens.space8),
-                    padding: const EdgeInsets.all(AppTokens.space16),
-                    decoration: BoxDecoration(
-                      color: AppTokens.white,
-                      borderRadius: BorderRadius.circular(
-                        AppTokens.radiusButton,
+            if (budgets.isEmpty)
+              SliverToBoxAdapter(
+                child: EmptyStateView(
+                  message: AppStrings.emptyBudgets,
+                  icon: Icons.pie_chart_outline_rounded,
+                  actionLabel: AppStrings.setBudget,
+                  onAction: () => SetBudgetSheet.show(context),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.space24,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final budget = budgets[index];
+                    final cat = categories.firstWhere(
+                      (c) => c.id == budget.categoryId,
+                      orElse: () => const Category(
+                        id: '',
+                        name: 'Khác',
+                        type: 'expense',
+                        icon: 'category',
+                        colorToken: 'slateGray',
                       ),
-                      border: Border.all(
-                        color: AppTokens.dustTaupe.withValues(alpha: 0.5),
-                        width: 1.0,
+                    );
+
+                    final spent = summary.byCategory[budget.categoryId] ?? 0;
+                    final remaining = budget.plannedAmount - spent;
+
+                    return GestureDetector(
+                      onTap: () => SetBudgetSheet.show(
+                        context,
+                        initialCategoryId: budget.categoryId,
+                        initialType: budget.type,
+                        initialPlannedAmount: budget.plannedAmount,
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: AppTokens.space8),
+                        padding: const EdgeInsets.all(AppTokens.space16),
+                        decoration: BoxDecoration(
+                          color: AppTokens.white,
+                          borderRadius: BorderRadius.circular(
+                            AppTokens.radiusButton,
+                          ),
+                          border: Border.all(
+                            color: AppTokens.dustTaupe.withValues(alpha: 0.5),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            CategoryAvatar(iconName: cat.icon, size: 36.0),
-                            const SizedBox(width: AppTokens.space16),
-                            Expanded(
-                              child: Text(
-                                cat.name,
-                                style: const TextStyle(
-                                  fontFamily: AppTokens.fontFamilyPrimary,
-                                  fontSize: 15.0,
-                                  fontWeight: AppTokens.weightMedium,
-                                  color: AppTokens.inkBlack,
-                                ),
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                            Row(
                               children: <Widget>[
-                                AmountText(
-                                  amount: spent,
-                                  fontSize: 14.5,
-                                  fontWeight: AppTokens.weightBold,
+                                CategoryAvatar(iconName: cat.icon, size: 36.0),
+                                const SizedBox(width: AppTokens.space16),
+                                Expanded(
+                                  child: Text(
+                                    cat.name,
+                                    style: const TextStyle(
+                                      fontFamily: AppTokens.fontFamilyPrimary,
+                                      fontSize: 15.0,
+                                      fontWeight: AppTokens.weightMedium,
+                                      color: AppTokens.inkBlack,
+                                    ),
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    AmountText(
+                                      amount: spent,
+                                      fontSize: 14.5,
+                                      fontWeight: AppTokens.weightBold,
+                                    ),
+                                    Text(
+                                      'Dự tính: ${budget.plannedAmount ~/ 1000}k',
+                                      style: const TextStyle(
+                                        fontSize: 11.0,
+                                        color: AppTokens.slateGray,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppTokens.space128 * 0.08),
+                            BudgetBar(
+                              spentAmount: spent,
+                              plannedAmount: budget.plannedAmount,
+                              height: 6.0,
+                            ),
+                            const SizedBox(height: 6.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  spent > budget.plannedAmount
+                                      ? 'Đã vượt ${(spent - budget.plannedAmount) ~/ 1000}k'
+                                      : 'Còn lại ${remaining ~/ 1000}k',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: AppTokens.weightMedium,
+                                    color: spent > budget.plannedAmount
+                                        ? AppTokens.semanticBudgetExceeded
+                                        : AppTokens.slateGray,
+                                  ),
                                 ),
                                 Text(
-                                  'Dự tính: ${budget.plannedAmount ~/ 1000}k',
+                                  '${((spent / budget.plannedAmount) * 100).toInt()}%',
                                   style: const TextStyle(
-                                    fontSize: 11.0,
+                                    fontSize: 11.5,
                                     color: AppTokens.slateGray,
                                   ),
                                 ),
@@ -231,43 +330,11 @@ class BudgetsScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: AppTokens.space128 * 0.08),
-                        BudgetBar(
-                          spentAmount: spent,
-                          plannedAmount: budget.plannedAmount,
-                          height: 6.0,
-                        ),
-                        const SizedBox(height: 6.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              spent > budget.plannedAmount
-                                  ? 'Đã vượt ${(spent - budget.plannedAmount) ~/ 1000}k'
-                                  : 'Còn lại ${remaining ~/ 1000}k',
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: AppTokens.weightMedium,
-                                color: spent > budget.plannedAmount
-                                    ? AppTokens.semanticBudgetExceeded
-                                    : AppTokens.slateGray,
-                              ),
-                            ),
-                            Text(
-                              '${((spent / budget.plannedAmount) * 100).toInt()}%',
-                              style: const TextStyle(
-                                fontSize: 11.5,
-                                color: AppTokens.slateGray,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }, childCount: budgets.length),
+                      ),
+                    );
+                  }, childCount: budgets.length),
+                ),
               ),
-            ),
 
             const SliverToBoxAdapter(
               child: SizedBox(height: AppTokens.space32),

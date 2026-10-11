@@ -1,0 +1,35 @@
+import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
+
+/// File mẫu cấu hình Firebase môi trường Prod.
+/// Sao chép thành `lib/firebase/firebase_options_prod.dart` và điền key dự án của bạn.
+class FirebaseOptionsProd {
+  static FirebaseOptions get currentPlatform {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return android;
+      case TargetPlatform.iOS:
+        return ios;
+      default:
+        throw UnsupportedError('FirebaseOptionsProd không hỗ trợ platform này.');
+    }
+  }
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSy_YOUR_ANDROID_PROD_KEY_HERE',
+    appId: '1:000000000000:android:0000000000000000000000',
+    messagingSenderId: '000000000000',
+    projectId: 'orbit-app-prod',
+    storageBucket: 'orbit-app-prod.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSy_YOUR_IOS_PROD_KEY_HERE',
+    appId: '1:000000000000:ios:0000000000000000000000',
+    messagingSenderId: '000000000000',
+    projectId: 'orbit-app-prod',
+    storageBucket: 'orbit-app-prod.firebasestorage.app',
+    iosBundleId: 'com.yourname.quyDao',
+  );
+}

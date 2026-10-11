@@ -46,11 +46,25 @@ app.*.map.json
 
 # Environment and sensitive keys
 .env
+.env.*
 *.keystore
+*.jks
+*.p8
+*.p12
 key.properties
+local.properties
 service-account*.json
 .firebase/
 coverage/
 
-# Allow Firebase options files
-!**/firebase_options_*.dart
+# Firebase configuration credentials
+google-services.json
+**/google-services.json
+GoogleService-Info.plist
+**/GoogleService-Info.plist
+lib/firebase_options*.dart
+lib/firebase/firebase_options_*.dart
+
+# Agent & workspace artifacts
+.agents/
+skills-lock.json

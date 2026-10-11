@@ -39,6 +39,9 @@ abstract final class AppTokens {
   /// Signal Orange: Burnt/rust CTA orange for consent & alert actions (#CF4500).
   static const Color signalOrange = Color(0xFFCF4500);
 
+  /// Orbit Orange: alias của signalOrange cho vòng quỹ đạo & điểm nhấn.
+  static const Color orbitOrange = signalOrange;
+
   /// Light Signal Orange: Carroty orange for decorative orbital arcs & indicators (#F37338).
   static const Color lightSignalOrange = Color(0xFFF37338);
 
@@ -96,7 +99,9 @@ abstract final class AppTokens {
 
   static const double space4 = 4.0;
   static const double space8 = 8.0;
+  static const double space12 = 12.0;
   static const double space16 = 16.0;
+  static const double space20 = 20.0;
   static const double space24 = 24.0;
   static const double space32 = 32.0;
   static const double space48 = 48.0;

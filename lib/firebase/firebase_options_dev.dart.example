@@ -1,0 +1,35 @@
+import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
+
+/// File mẫu cấu hình Firebase môi trường Dev.
+/// Sao chép thành `lib/firebase/firebase_options_dev.dart` và điền key dự án của bạn.
+class FirebaseOptionsDev {
+  static FirebaseOptions get currentPlatform {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return android;
+      case TargetPlatform.iOS:
+        return ios;
+      default:
+        throw UnsupportedError('FirebaseOptionsDev không hỗ trợ platform này.');
+    }
+  }
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSy_YOUR_ANDROID_DEV_KEY_HERE',
+    appId: '1:000000000000:android:0000000000000000000000',
+    messagingSenderId: '000000000000',
+    projectId: 'orbit-app-dev',
+    storageBucket: 'orbit-app-dev.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSy_YOUR_IOS_DEV_KEY_HERE',
+    appId: '1:000000000000:ios:0000000000000000000000',
+    messagingSenderId: '000000000000',
+    projectId: 'orbit-app-dev',
+    storageBucket: 'orbit-app-dev.firebasestorage.app',
+    iosBundleId: 'com.yourname.quyDao',
+  );
+}

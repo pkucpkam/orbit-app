@@ -4,10 +4,14 @@ import 'package:quy_dao/core/strings/app_strings.dart';
 import 'package:quy_dao/core/theme/app_tokens.dart';
 import 'package:quy_dao/core/widgets/amount_text.dart';
 import 'package:quy_dao/core/widgets/category_avatar.dart';
+import 'package:quy_dao/core/widgets/empty_state_view.dart';
 import 'package:quy_dao/core/widgets/pill_chip.dart';
 import 'package:quy_dao/data/models/category.dart';
 import 'package:quy_dao/data/models/wallet.dart';
-import 'package:quy_dao/data/repositories/app_mock_providers.dart';
+import 'package:quy_dao/data/providers/app_state_providers.dart';
+import 'package:quy_dao/data/repositories/app_providers.dart';
+import 'package:quy_dao/data/repositories/transaction_repository.dart';
+import 'package:quy_dao/features/transactions/presentation/add_transaction_sheet.dart';
 
 class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
@@ -33,6 +37,26 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     return Scaffold(
       backgroundColor: AppTokens.canvasCream,
       appBar: AppBar(title: const Text(AppStrings.tabTransactions)),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_transactions',
+        backgroundColor: AppTokens.inkBlack,
+        foregroundColor: AppTokens.canvasCream,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+        ),
+        icon: const Icon(Icons.add, size: 20.0),
+        label: const Text(
+          AppStrings.addTransaction,
+          style: TextStyle(
+            fontFamily: AppTokens.fontFamilyPrimary,
+            fontWeight: AppTokens.weightMedium,
+          ),
+        ),
+        onPressed: () => AddTransactionSheet.show(
+          context,
+          initialType: _selectedType == 'all' ? 'expense' : _selectedType,
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -68,118 +92,177 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                     isSelected: _selectedType == 'saving',
                     onTap: () => setState(() => _selectedType = 'saving'),
                   ),
+                  const SizedBox(width: AppTokens.space8),
+                  PillChip(
+                    label: AppStrings.transfer,
+                    isSelected: _selectedType == 'transfer',
+                    onTap: () => setState(() => _selectedType = 'transfer'),
+                  ),
                 ],
               ),
             ),
 
             // Danh sách giao dịch
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTokens.space24,
-                  vertical: AppTokens.space8,
-                ),
-                itemCount: filteredTxs.length,
-                itemBuilder: (context, index) {
-                  final tx = filteredTxs[index];
-                  final cat = categories.firstWhere(
-                    (c) => c.id == tx.categoryId,
-                    orElse: () => const Category(
-                      id: '',
-                      name: 'Tiết kiệm',
-                      type: 'saving',
-                      icon: 'savings',
-                      colorToken: 'signalOrange',
-                    ),
-                  );
-                  final wallet = wallets.firstWhere(
-                    (w) => w.id == tx.walletId,
-                    orElse: () => const Wallet(
-                      id: '',
-                      name: 'Ví mặc định',
-                      type: 'cash',
-                      balance: 0,
-                    ),
-                  );
-
-                  final isIncome = tx.type == 'income';
-                  final isSaving = tx.type == 'saving';
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: AppTokens.space8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTokens.space16,
-                      vertical: 14.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTokens.white,
-                      borderRadius: BorderRadius.circular(
-                        AppTokens.radiusButton,
+              child: filteredTxs.isEmpty
+                  ? EmptyStateView(
+                      message: AppStrings.emptyTransactions,
+                      icon: Icons.receipt_long_outlined,
+                      actionLabel: AppStrings.addTransaction,
+                      onAction: () => AddTransactionSheet.show(context),
+                    )
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTokens.space24,
+                        vertical: AppTokens.space8,
                       ),
-                      border: Border.all(
-                        color: AppTokens.dustTaupe.withValues(alpha: 0.5),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        CategoryAvatar(
-                          iconName: isSaving ? 'savings' : cat.icon,
-                          size: 42.0,
-                        ),
-                        const SizedBox(width: AppTokens.space16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                tx.note.isNotEmpty ? tx.note : cat.name,
-                                style: const TextStyle(
-                                  fontFamily: AppTokens.fontFamilyPrimary,
-                                  fontWeight: AppTokens.weightMedium,
-                                  fontSize: 15.0,
-                                  color: AppTokens.inkBlack,
-                                ),
-                              ),
-                              const SizedBox(height: 2.0),
-                              Text(
-                                '${cat.name} • ${wallet.name}',
-                                style: const TextStyle(
-                                  fontSize: 12.0,
-                                  color: AppTokens.slateGray,
-                                ),
-                              ),
-                            ],
+                      itemCount: filteredTxs.length,
+                      itemBuilder: (context, index) {
+                        final tx = filteredTxs[index];
+                        final cat = categories.firstWhere(
+                          (c) => c.id == tx.categoryId,
+                          orElse: () => const Category(
+                            id: '',
+                            name: 'Chưa phân loại',
+                            type: 'expense',
+                            icon: 'tag',
+                            colorToken: 'gray',
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            AmountText(
-                              amount: tx.amount,
-                              type: isIncome
-                                  ? AmountDisplayType.income
-                                  : (isSaving
-                                        ? AmountDisplayType.neutral
-                                        : AmountDisplayType.expense),
-                              fontSize: 15.0,
-                              fontWeight: AppTokens.weightMedium,
+                        );
+                        final wallet = wallets.firstWhere(
+                          (w) => w.id == tx.walletId,
+                          orElse: () => const Wallet(
+                            id: '',
+                            name: 'Ví mặc định',
+                            type: 'cash',
+                            balance: 0,
+                          ),
+                        );
+
+                        final isIncome = tx.type == 'income';
+                        final isSaving = tx.type == 'saving';
+
+                        return Dismissible(
+                          key: Key(tx.id.isNotEmpty ? tx.id : '$index'),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(
+                              right: AppTokens.space20,
                             ),
-                            const SizedBox(height: 2.0),
-                            Text(
-                              '${tx.date.day.toString().padLeft(2, '0')}/${tx.date.month.toString().padLeft(2, '0')}',
-                              style: const TextStyle(
-                                fontSize: 11.0,
-                                color: AppTokens.slateGray,
+                            margin: const EdgeInsets.only(
+                              bottom: AppTokens.space8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTokens.signalOrange,
+                              borderRadius: BorderRadius.circular(
+                                AppTokens.radiusButton,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                            child: const Icon(
+                              Icons.delete_outline,
+                              color: AppTokens.white,
+                            ),
+                          ),
+                          confirmDismiss: (direction) async {
+                            final uid = ref.read(currentUidProvider);
+                            if (uid == null) return false;
+                            await ref
+                                .read(transactionRepositoryProvider)
+                                .deleteTransaction(uid, tx);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(AppStrings.transactionDeleted),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                            return true;
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                              bottom: AppTokens.space8,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppTokens.space16,
+                              vertical: 14.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTokens.white,
+                              borderRadius: BorderRadius.circular(
+                                AppTokens.radiusButton,
+                              ),
+                              border: Border.all(
+                                color: AppTokens.dustTaupe.withValues(
+                                  alpha: 0.5,
+                                ),
+                                width: 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                CategoryAvatar(
+                                  iconName: isSaving ? 'savings' : cat.icon,
+                                  size: 42.0,
+                                ),
+                                const SizedBox(width: AppTokens.space16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        tx.note.isNotEmpty ? tx.note : cat.name,
+                                        style: const TextStyle(
+                                          fontFamily:
+                                              AppTokens.fontFamilyPrimary,
+                                          fontWeight: AppTokens.weightMedium,
+                                          fontSize: 15.0,
+                                          color: AppTokens.inkBlack,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2.0),
+                                      Text(
+                                        '${cat.name} • ${wallet.name}',
+                                        style: const TextStyle(
+                                          fontSize: 12.0,
+                                          color: AppTokens.slateGray,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    AmountText(
+                                      amount: tx.amount,
+                                      type: isIncome
+                                          ? AmountDisplayType.income
+                                          : (isSaving
+                                                ? AmountDisplayType.neutral
+                                                : AmountDisplayType.expense),
+                                      fontSize: 15.0,
+                                      fontWeight: AppTokens.weightMedium,
+                                    ),
+                                    const SizedBox(height: 2.0),
+                                    Text(
+                                      '${tx.date.day.toString().padLeft(2, '0')}/${tx.date.month.toString().padLeft(2, '0')}',
+                                      style: const TextStyle(
+                                        fontSize: 11.0,
+                                        color: AppTokens.slateGray,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
