@@ -44,6 +44,7 @@ class OverviewScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTokens.canvasCream,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_overview',
         backgroundColor: AppTokens.inkBlack,
         foregroundColor: AppTokens.canvasCream,
         shape: RoundedRectangleBorder(

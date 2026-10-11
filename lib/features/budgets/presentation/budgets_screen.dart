@@ -30,6 +30,7 @@ class BudgetsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTokens.canvasCream,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_budgets',
         backgroundColor: AppTokens.inkBlack,
         foregroundColor: AppTokens.canvasCream,
         shape: RoundedRectangleBorder(

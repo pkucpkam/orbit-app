@@ -26,6 +26,7 @@ class SavingsScreen extends ConsumerWidget {
       backgroundColor: AppTokens.canvasCream,
       appBar: AppBar(title: const Text(AppStrings.tabSavings)),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_savings',
         backgroundColor: AppTokens.inkBlack,
         foregroundColor: AppTokens.canvasCream,
         shape: RoundedRectangleBorder(

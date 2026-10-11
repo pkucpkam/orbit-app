@@ -38,6 +38,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       backgroundColor: AppTokens.canvasCream,
       appBar: AppBar(title: const Text(AppStrings.tabTransactions)),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_transactions',
         backgroundColor: AppTokens.inkBlack,
         foregroundColor: AppTokens.canvasCream,
         shape: RoundedRectangleBorder(
