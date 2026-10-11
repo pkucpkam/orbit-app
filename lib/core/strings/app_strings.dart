@@ -35,6 +35,18 @@ abstract final class AppStrings {
   static const String close = 'Đóng';
 
   // ---------------------------------------------------------------------------
+  // Báo cáo & Thống kê
+  // ---------------------------------------------------------------------------
+  static const String reportOverview = 'Tổng quan phân bổ';
+  static const String reportCategories = 'Cơ cấu theo danh mục';
+  static const String reportIncomeVsExpense = 'Thu & Chi theo thời gian';
+  static const String reportTopExpenses = 'Top 5 khoản chi lớn nhất';
+  static const String periodMonth = 'Tháng này';
+  static const String periodQuarter = 'Quý này';
+  static const String periodYear = 'Năm nay';
+  static const String emptyReport = 'Chưa có dữ liệu giao dịch trong kỳ này';
+
+  // ---------------------------------------------------------------------------
   // Trạng thái chung (Loading, Empty, Error, Offline)
   // ---------------------------------------------------------------------------
   static const String loading = 'Đang tải dữ liệu...';
@@ -95,4 +107,86 @@ abstract final class AppStrings {
   static const String savedAmount = 'Đã gom';
   static const String streakToday = 'Hôm nay không chi';
   static const String streakDays = 'ngày liên tiếp';
+  static const String milestone25 = '25%';
+  static const String milestone50 = '50%';
+  static const String milestone75 = '75%';
+  static const String milestone100 = '100%';
+  static const String milestoneKeepGoing = 'Tiếp tục phát huy';
+  static const String milestoneCompletedTitle = 'Mục tiêu hoàn thành!';
+
+  /// Tiêu đề chúc mừng theo cột mốc
+  static String milestoneTitle(int milestone) {
+    return switch (milestone) {
+      25 => 'Khởi đầu tuyệt vời!',
+      50 => 'Hơn nửa chặng đường!',
+      75 => 'Rất gần đích đến!',
+      100 => 'Chúc mừng bạn đã về đích!',
+      _ => 'Cột mốc tuyệt vời!',
+    };
+  }
+
+  /// Thông điệp động lực theo cột mốc và thời gian
+  static String milestoneMessage({
+    required int milestone,
+    required String goalName,
+    int? remainingMonths,
+    int? remainingDays,
+  }) {
+    if (milestone >= 100) {
+      return 'Bạn đã hoàn thành trọn vẹn mục tiêu "$goalName". Một cột mốc tài chính đáng tự hào!';
+    }
+    final timeStr = remainingMonths != null && remainingMonths > 0
+        ? 'Còn $remainingMonths tháng'
+        : (remainingDays != null ? 'Còn $remainingDays ngày' : '');
+    final prefix = timeStr.isNotEmpty ? '$timeStr, bạn' : 'Bạn';
+    return switch (milestone) {
+      25 => '$prefix đã tích lũy được một phần tư chặng đường cho "$goalName".',
+      50 => '$prefix đã đi được hơn nửa chặng đường cho "$goalName".',
+      75 =>
+        '$prefix đã đạt 75% mục tiêu "$goalName". Đích đến đang ở ngay phía trước!',
+      _ => '$prefix đã đạt mốc $milestone% cho "$goalName".',
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Thông báo & Cảnh báo (Local Notifications)
+  // ---------------------------------------------------------------------------
+  static const String notificationChannelName = 'Quỹ Đạo';
+  static const String notificationChannelDesc =
+      'Nhắc nhở ghi chép hằng ngày và cảnh báo ngân sách';
+  static const String dailyReminderTitle = 'Đã đến giờ tổng kết ngày';
+  static const String dailyReminderBody =
+      'Dành 10 giây ghi lại các khoản thu chi hôm nay để giữ vững quỹ đạo tài chính.';
+  static const String budgetAlertTitle = 'Cập nhật ngân sách';
+
+  // ---------------------------------------------------------------------------
+  // Xác thực & Tài khoản
+  // ---------------------------------------------------------------------------
+  static const String loginTitle = 'Bắt đầu hành trình';
+  static const String loginSubtitle =
+      'Quản lý thu chi & tích lũy theo quỹ đạo thời gian thực';
+  static const String signInWithGoogle = 'Đăng nhập bằng Google';
+  static const String signInWithEmail = 'Đăng nhập bằng Email';
+  static const String createAccount = 'Tạo tài khoản mới';
+  static const String continueAsGuest = 'Trải nghiệm ngay (Khách)';
+  static const String email = 'Email';
+  static const String password = 'Mật khẩu';
+  static const String signOut = 'Đăng xuất';
+  static const String deleteAccount = 'Xóa tài khoản';
+  static const String profile = 'Hồ sơ';
+
+  // ---------------------------------------------------------------------------
+  // Biểu mẫu nhập liệu & Thao tác
+  // ---------------------------------------------------------------------------
+  static const String addTransaction = 'Thêm giao dịch';
+  static const String setBudget = 'Đặt ngân sách';
+  static const String plannedAmount = 'Số tiền dự tính';
+  static const String goalName = 'Tên mục tiêu';
+  static const String deadline = 'Thời hạn';
+  static const String selectCategory = 'Chọn danh mục';
+  static const String selectWallet = 'Chọn ví';
+  static const String selectGoal = 'Chọn mục tiêu';
+  static const String pleaseEnterAmount = 'Vui lòng nhập số tiền lớn hơn 0';
+  static const String transactionSaved = 'Đã lưu giao dịch';
+  static const String transactionDeleted = 'Đã xóa giao dịch';
 }

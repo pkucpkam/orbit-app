@@ -1,6 +1,1 @@
-{
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
-}
+{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"orbit-app-b8e71","appId":"1:31058563995:android:14eb53b4ced56d3477873e","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"orbit-app-b8e71","configurations":{"android":"1:31058563995:android:14eb53b4ced56d3477873e","ios":"1:31058563995:ios:3bce08039389169a77873e"}}}}}}

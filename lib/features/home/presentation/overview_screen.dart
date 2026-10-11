@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quy_dao/core/strings/app_strings.dart';
 import 'package:quy_dao/core/theme/app_tokens.dart';
 import 'package:quy_dao/core/widgets/amount_text.dart';
 import 'package:quy_dao/core/widgets/category_avatar.dart';
+import 'package:quy_dao/core/widgets/empty_state_view.dart';
 import 'package:quy_dao/core/widgets/orbit_progress_ring.dart';
 import 'package:quy_dao/core/widgets/pill_button.dart';
 import 'package:quy_dao/data/models/category.dart';
 import 'package:quy_dao/data/models/transaction.dart';
-import 'package:quy_dao/data/repositories/app_mock_providers.dart';
+import 'package:quy_dao/data/providers/app_state_providers.dart';
+import 'package:quy_dao/data/repositories/app_providers.dart';
+import 'package:quy_dao/data/repositories/budget_repository.dart';
+import 'package:quy_dao/features/auth/presentation/auth_sheet.dart';
+import 'package:quy_dao/features/transactions/presentation/add_transaction_sheet.dart';
 
 class OverviewScreen extends ConsumerWidget {
   const OverviewScreen({super.key});
@@ -25,8 +31,34 @@ class OverviewScreen extends ConsumerWidget {
 
     final featuredGoal = goals.isNotEmpty ? goals.first : null;
 
+    final authUser = ref.watch(firebaseAuthProvider)?.currentUser;
+    final displayName = authUser?.displayName?.isNotEmpty == true
+        ? authUser!.displayName!
+        : (authUser != null
+              ? (authUser.isAnonymous ? 'Khách' : authUser.email ?? 'Bạn')
+              : 'Bạn');
+    final avatarLetter = displayName.isNotEmpty
+        ? displayName[0].toUpperCase()
+        : 'Q';
+
     return Scaffold(
       backgroundColor: AppTokens.canvasCream,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppTokens.inkBlack,
+        foregroundColor: AppTokens.canvasCream,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+        ),
+        icon: const Icon(Icons.add, size: 20.0),
+        label: const Text(
+          AppStrings.addTransaction,
+          style: TextStyle(
+            fontFamily: AppTokens.fontFamilyPrimary,
+            fontWeight: AppTokens.weightMedium,
+          ),
+        ),
+        onPressed: () => AddTransactionSheet.show(context),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
@@ -41,10 +73,10 @@ class OverviewScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'Xin chào,',
                           style: TextStyle(
                             fontFamily: AppTokens.fontFamilyPrimary,
@@ -52,10 +84,10 @@ class OverviewScreen extends ConsumerWidget {
                             color: AppTokens.slateGray,
                           ),
                         ),
-                        SizedBox(height: 2.0),
+                        const SizedBox(height: 2.0),
                         Text(
-                          'Phúc Pro 👋',
-                          style: TextStyle(
+                          '$displayName 👋',
+                          style: const TextStyle(
                             fontFamily: AppTokens.fontFamilyPrimary,
                             fontSize: 22.0,
                             fontWeight: AppTokens.weightMedium,
@@ -65,29 +97,159 @@ class OverviewScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 44.0,
-                      height: 44.0,
-                      decoration: BoxDecoration(
-                        color: AppTokens.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppTokens.dustTaupe,
-                          width: 1.5,
+                    Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => context.push('/reports'),
+                          child: Container(
+                            width: 44.0,
+                            height: 44.0,
+                            margin: const EdgeInsets.only(
+                              right: AppTokens.space12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTokens.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTokens.dustTaupe,
+                                width: 1.5,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.pie_chart_outline_rounded,
+                              size: 22.0,
+                              color: AppTokens.inkBlack,
+                            ),
+                          ),
                         ),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'P',
-                        style: TextStyle(
-                          fontFamily: AppTokens.fontFamilyPrimary,
-                          fontWeight: AppTokens.weightBold,
-                          fontSize: 18.0,
-                          color: AppTokens.inkBlack,
+                        GestureDetector(
+                          onTap: () => AuthSheet.show(context),
+                          child: Container(
+                            width: 44.0,
+                            height: 44.0,
+                            decoration: BoxDecoration(
+                              color: AppTokens.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTokens.dustTaupe,
+                                width: 1.5,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              avatarLetter,
+                              style: const TextStyle(
+                                fontFamily: AppTokens.fontFamilyPrimary,
+                                fontWeight: AppTokens.weightBold,
+                                fontSize: 18.0,
+                                color: AppTokens.inkBlack,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
+                ),
+              ),
+            ),
+
+            // Thẻ Streak ghi chép + "Hôm nay không chi"
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.space24,
+                  vertical: AppTokens.space4,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTokens.space16,
+                    vertical: 10.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTokens.white,
+                    borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                    border: Border.all(
+                      color: AppTokens.dustTaupe.withValues(alpha: 0.5),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      const Text('🔥', style: TextStyle(fontSize: 20.0)),
+                      const SizedBox(width: AppTokens.space8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${streak.currentStreak} ${AppStrings.streakDays}',
+                              style: const TextStyle(
+                                fontFamily: AppTokens.fontFamilyPrimary,
+                                fontSize: 13.5,
+                                fontWeight: AppTokens.weightBold,
+                                color: AppTokens.inkBlack,
+                              ),
+                            ),
+                            const Text(
+                              'Duy trì kỷ lục ghi chép mỗi ngày',
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                color: AppTokens.slateGray,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTokens.orbitOrange),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppTokens.radiusButton,
+                            ),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                            vertical: 4.0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          final uid = ref.read(currentUidProvider);
+                          if (uid != null) {
+                            final monthKey = ref.read(currentMonthKeyProvider);
+                            final now = DateTime.now();
+                            final todayStr =
+                                '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+                            await ref
+                                .read(monthSummaryRepositoryProvider)
+                                .recordStreakDay(uid, monthKey, todayStr);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Đã ghi nhận hôm nay không chi!',
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          } else {
+                            await AuthSheet.show(context);
+                          }
+                        },
+                        child: const Text(
+                          AppStrings.streakToday,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: AppTokens.signalOrange,
+                            fontWeight: AppTokens.weightMedium,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -437,28 +599,38 @@ class OverviewScreen extends ConsumerWidget {
             ),
 
             // Danh sách 5 giao dịch gần nhất
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.space24,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final tx = recentTxs[index];
-                  final cat = categories.firstWhere(
-                    (c) => c.id == tx.categoryId,
-                    orElse: () => const Category(
-                      id: '',
-                      name: 'Tiết kiệm',
-                      type: 'saving',
-                      icon: 'savings',
-                      colorToken: 'signalOrange',
-                    ),
-                  );
+            if (recentTxs.isEmpty)
+              SliverToBoxAdapter(
+                child: EmptyStateView(
+                  message: AppStrings.emptyTransactions,
+                  icon: Icons.receipt_long_outlined,
+                  actionLabel: AppStrings.addTransaction,
+                  onAction: () => AddTransactionSheet.show(context),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.space24,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final tx = recentTxs[index];
+                    final cat = categories.firstWhere(
+                      (c) => c.id == tx.categoryId,
+                      orElse: () => const Category(
+                        id: '',
+                        name: 'Tiết kiệm',
+                        type: 'saving',
+                        icon: 'savings',
+                        colorToken: 'signalOrange',
+                      ),
+                    );
 
-                  return _TransactionItem(transaction: tx, category: cat);
-                }, childCount: recentTxs.length),
+                    return _TransactionItem(transaction: tx, category: cat);
+                  }, childCount: recentTxs.length),
+                ),
               ),
-            ),
 
             const SliverToBoxAdapter(
               child: SizedBox(height: AppTokens.space32),
