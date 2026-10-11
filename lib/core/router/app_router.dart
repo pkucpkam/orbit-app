@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quy_dao/core/strings/app_strings.dart';
+import 'package:quy_dao/features/budgets/presentation/budgets_screen.dart';
+import 'package:quy_dao/features/home/presentation/overview_screen.dart';
+import 'package:quy_dao/features/savings/presentation/savings_screen.dart';
+import 'package:quy_dao/features/transactions/presentation/transactions_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -48,13 +52,7 @@ final GoRouter appRouter = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/overview',
-              builder: (context, state) => const Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: _TabAppBar(title: AppStrings.tabOverview),
-                ),
-                body: Center(child: Text(AppStrings.tabOverview)),
-              ),
+              builder: (context, state) => const OverviewScreen(),
             ),
           ],
         ),
@@ -62,13 +60,7 @@ final GoRouter appRouter = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/transactions',
-              builder: (context, state) => const Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: _TabAppBar(title: AppStrings.tabTransactions),
-                ),
-                body: Center(child: Text(AppStrings.tabTransactions)),
-              ),
+              builder: (context, state) => const TransactionsScreen(),
             ),
           ],
         ),
@@ -76,13 +68,7 @@ final GoRouter appRouter = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/budgets',
-              builder: (context, state) => const Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: _TabAppBar(title: AppStrings.tabBudgets),
-                ),
-                body: Center(child: Text(AppStrings.tabBudgets)),
-              ),
+              builder: (context, state) => const BudgetsScreen(),
             ),
           ],
         ),
@@ -90,13 +76,7 @@ final GoRouter appRouter = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/savings',
-              builder: (context, state) => const Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
-                  child: _TabAppBar(title: AppStrings.tabSavings),
-                ),
-                body: Center(child: Text(AppStrings.tabSavings)),
-              ),
+              builder: (context, state) => const SavingsScreen(),
             ),
           ],
         ),
@@ -104,14 +84,3 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
-
-class _TabAppBar extends StatelessWidget {
-  const _TabAppBar({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(title: Text(title));
-  }
-}
