@@ -153,7 +153,7 @@ class _SetBudgetSheetState extends ConsumerState<SetBudgetSheet> {
       decoration: const BoxDecoration(
         color: AppTokens.canvasCream,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTokens.radiusStadium),
+          top: Radius.circular(AppTokens.radiusSheet),
         ),
       ),
       padding: EdgeInsets.only(
@@ -216,7 +216,7 @@ class _SetBudgetSheetState extends ConsumerState<SetBudgetSheet> {
               ),
               decoration: BoxDecoration(
                 color: AppTokens.white,
-                borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                 border: Border.all(color: AppTokens.dustTaupe, width: 1.0),
               ),
               child: Row(
@@ -236,6 +236,12 @@ class _SetBudgetSheetState extends ConsumerState<SetBudgetSheet> {
                       decoration: const InputDecoration(
                         hintText: '0',
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        filled: false,
+                        fillColor: Colors.transparent,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -330,7 +336,7 @@ class _SetBudgetSheetState extends ConsumerState<SetBudgetSheet> {
                 },
               ),
             ),
-            const SizedBox(height: AppTokens.space20),
+            const SizedBox(height: AppTokens.space24),
 
             if (_errorMessage != null) ...<Widget>[
               Text(

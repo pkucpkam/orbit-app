@@ -93,5 +93,7 @@ Tiến độ phát triển được chia theo 5 giai đoạn roadmap chính quy 
   - *Xong khi:* Toàn bộ màn hình xử lý triệt để: Skeleton loading, Empty state có hành động, Error có nút Thử lại, Banner Offline sync.
 - [x] **5.3. Kích hoạt Firebase App Check**
   - *Xong khi:* Bảo vệ an toàn backend với Play Integrity và App Attest.
+- [x] **5.5. Hướng dẫn sử dụng & Tutorial Từng bước (User Guide & Onboarding)**
+  - *Xong khi:* Triển khai màn hình `GuideScreen` với 2 chế độ: Step Tutorial (5 bước trực quan với PageView) và Cẩm nang tính năng & FAQ (Accordion giải đáp chi tiết); banner & nút trợ giúp trên trang Tổng quan; chuẩn hóa bo góc 12px theo Mastercard Design; 100% test pass.
 - [ ] **5.4. Kiểm thử Khả năng Truy cập & Thiết bị Thật**
   - *Xong khi:* Kiểm tra độ tương phản màu sắc, cỡ chữ lớn, kiểm thử trên cả Android và iOS thật.

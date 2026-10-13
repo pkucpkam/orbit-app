@@ -65,7 +65,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTokens.space24,
-                vertical: AppTokens.space8,
+                vertical: AppTokens.space12,
               ),
               child: Row(
                 children: <Widget>[
@@ -105,17 +105,17 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             // Danh sách giao dịch
             Expanded(
               child: filteredTxs.isEmpty
-                  ? EmptyStateView(
+                  ? const EmptyStateView(
                       message: AppStrings.emptyTransactions,
                       icon: Icons.receipt_long_outlined,
-                      actionLabel: AppStrings.addTransaction,
-                      onAction: () => AddTransactionSheet.show(context),
                     )
                   : ListView.builder(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTokens.space24,
-                        vertical: AppTokens.space8,
+                      padding: const EdgeInsets.fromLTRB(
+                        AppTokens.space24,
+                        AppTokens.space8,
+                        AppTokens.space24,
+                        AppTokens.space96,
                       ),
                       itemCount: filteredTxs.length,
                       itemBuilder: (context, index) {
@@ -152,7 +152,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                               right: AppTokens.space20,
                             ),
                             margin: const EdgeInsets.only(
-                              bottom: AppTokens.space8,
+                              bottom: AppTokens.space12,
                             ),
                             decoration: BoxDecoration(
                               color: AppTokens.signalOrange,
@@ -183,7 +183,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                           },
                           child: Container(
                             margin: const EdgeInsets.only(
-                              bottom: AppTokens.space8,
+                              bottom: AppTokens.space12,
                             ),
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppTokens.space16,

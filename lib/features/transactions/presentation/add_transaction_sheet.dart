@@ -104,11 +104,15 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
 
     final wallets = ref.read(walletsProvider);
     final wallet =
-        _selectedWallet ?? (wallets.isNotEmpty ? wallets.first : null);
-    if (wallet == null) {
-      setState(() => _errorMessage = 'Vui lòng chọn ví.');
-      return;
-    }
+        _selectedWallet ??
+        (wallets.isNotEmpty
+            ? wallets.first
+            : const Wallet(
+                id: 'default_cash',
+                name: 'Tiền mặt',
+                type: 'cash',
+                balance: 0,
+              ));
 
     final startDay = ref.read(monthStartDayProvider);
     final monthKey = monthKeyFor(_selectedDate, startDay);
@@ -237,6 +241,16 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider);
     final wallets = ref.watch(walletsProvider);
+    final effectiveWallets = wallets.isNotEmpty
+        ? wallets
+        : const [
+            Wallet(
+              id: 'default_cash',
+              name: 'Tiền mặt',
+              type: 'cash',
+              balance: 0,
+            ),
+          ];
     final goals = ref.watch(savingGoalsProvider);
 
     // Lọc danh mục theo type
@@ -253,7 +267,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
       decoration: const BoxDecoration(
         color: AppTokens.canvasCream,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTokens.radiusStadium),
+          top: Radius.circular(AppTokens.radiusSheet),
         ),
       ),
       padding: EdgeInsets.only(
@@ -334,7 +348,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
               ),
               decoration: BoxDecoration(
                 color: AppTokens.white,
-                borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                 border: Border.all(color: AppTokens.dustTaupe, width: 1.0),
               ),
               child: Row(
@@ -355,6 +369,12 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                       decoration: const InputDecoration(
                         hintText: '0',
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        filled: false,
+                        fillColor: Colors.transparent,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -403,7 +423,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
               ),
               const SizedBox(height: AppTokens.space8),
               SizedBox(
-                height: 72.0,
+                height: 78.0,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: filteredCategories.length,
@@ -484,7 +504,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
-                        AppTokens.radiusButton,
+                        AppTokens.radiusInput,
                       ),
                       borderSide: const BorderSide(color: AppTokens.dustTaupe),
                     ),
@@ -521,7 +541,9 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                       DropdownButtonFormField<Wallet>(
                         initialValue:
                             _selectedWallet ??
-                            (wallets.isNotEmpty ? wallets.first : null),
+                            (effectiveWallets.isNotEmpty
+                                ? effectiveWallets.first
+                                : null),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: AppTokens.white,
@@ -531,14 +553,14 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                              AppTokens.radiusButton,
+                              AppTokens.radiusInput,
                             ),
                             borderSide: const BorderSide(
                               color: AppTokens.dustTaupe,
                             ),
                           ),
                         ),
-                        items: wallets
+                        items: effectiveWallets
                             .map(
                               (w) => DropdownMenuItem(
                                 value: w,
@@ -572,7 +594,9 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                         DropdownButtonFormField<Wallet>(
                           initialValue:
                               _selectedToWallet ??
-                              (wallets.length > 1 ? wallets[1] : null),
+                              (effectiveWallets.length > 1
+                                  ? effectiveWallets[1]
+                                  : null),
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: AppTokens.white,
@@ -582,14 +606,14 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
-                                AppTokens.radiusButton,
+                                AppTokens.radiusInput,
                               ),
                               borderSide: const BorderSide(
                                 color: AppTokens.dustTaupe,
                               ),
                             ),
                           ),
-                          items: wallets
+                          items: effectiveWallets
                               .map(
                                 (w) => DropdownMenuItem(
                                   value: w,
@@ -622,11 +646,13 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                   vertical: 12.0,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   borderSide: const BorderSide(color: AppTokens.dustTaupe),
                 ),
               ),
             ),
+            const SizedBox(height: AppTokens.space12),
+
             // Ngày giao dịch
             GestureDetector(
               onTap: () async {
@@ -647,7 +673,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                 ),
                 decoration: BoxDecoration(
                   color: AppTokens.white,
-                  borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   border: Border.all(color: AppTokens.dustTaupe, width: 1.0),
                 ),
                 child: Row(
@@ -670,7 +696,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: AppTokens.space16),
+            const SizedBox(height: AppTokens.space24),
 
             if (_errorMessage != null) ...<Widget>[
               Text(
