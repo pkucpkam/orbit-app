@@ -21,9 +21,9 @@ class PillChip extends StatelessWidget {
     final fgColor = isSelected ? AppTokens.canvasCream : AppTokens.inkBlack;
     final borderColor = isSelected ? AppTokens.inkBlack : AppTokens.dustTaupe;
 
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(

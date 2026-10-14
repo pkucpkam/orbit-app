@@ -68,16 +68,18 @@ class FirestoreWalletRepository implements WalletRepository {
       _firestore.collection(FirestorePaths.walletsCollection(uid));
 
   @override
-  Stream<List<Wallet>> watchWallets(String uid) => _col(uid)
-      .where('archived', isEqualTo: false)
-      .orderBy('order')
-      .snapshots()
-      .map((s) => s.docs.map(_fromDoc).toList());
+  Stream<List<Wallet>> watchWallets(String uid) => _col(uid).snapshots().map(
+    (s) =>
+        s.docs.map(_fromDoc).where((w) => !w.archived).toList()
+          ..sort((a, b) => a.order.compareTo(b.order)),
+  );
 
   @override
-  Stream<List<Wallet>> watchAllWallets(String uid) => _col(
-    uid,
-  ).orderBy('order').snapshots().map((s) => s.docs.map(_fromDoc).toList());
+  Stream<List<Wallet>> watchAllWallets(String uid) => _col(uid).snapshots().map(
+    (s) =>
+        s.docs.map(_fromDoc).toList()
+          ..sort((a, b) => a.order.compareTo(b.order)),
+  );
 
   @override
   Future<String> createWallet(String uid, Wallet wallet) async {

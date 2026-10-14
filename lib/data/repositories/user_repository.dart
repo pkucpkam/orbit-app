@@ -184,3 +184,28 @@ final userProfileStreamProvider = StreamProvider.autoDispose<UserProfile?>((
   if (uid == null) return Stream.value(null);
   return ref.watch(userRepositoryProvider).watchProfile(uid);
 }, name: 'userProfileStreamProvider');
+
+/// Tự động khởi tạo dữ liệu cho user nếu chưa có trong Firestore.
+final ensureUserInitializedProvider = FutureProvider.autoDispose<void>((
+  ref,
+) async {
+  final uid = ref.watch(currentUidProvider);
+  if (uid == null) return;
+  final authUser = ref.watch(firebaseAuthProvider)?.currentUser;
+  if (authUser == null) return;
+
+  final userRepo = ref.watch(userRepositoryProvider);
+  final isInit = await userRepo.isUserInitialized(uid);
+  if (!isInit) {
+    await userRepo.initializeNewUser(
+      firebaseUser: authUser,
+      firstWallet: const Wallet(
+        id: '',
+        name: 'Tiền mặt',
+        type: 'cash',
+        balance: 0,
+      ),
+      monthStartDay: 1,
+    );
+  }
+}, name: 'ensureUserInitializedProvider');

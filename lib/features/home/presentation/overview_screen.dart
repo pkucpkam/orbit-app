@@ -11,6 +11,7 @@ import 'package:quy_dao/data/models/transaction.dart';
 import 'package:quy_dao/data/providers/app_state_providers.dart';
 import 'package:quy_dao/data/repositories/app_providers.dart';
 import 'package:quy_dao/data/repositories/budget_repository.dart';
+import 'package:quy_dao/data/repositories/user_repository.dart';
 import 'package:quy_dao/features/auth/presentation/auth_sheet.dart';
 import 'package:quy_dao/features/transactions/presentation/add_transaction_sheet.dart';
 
@@ -19,6 +20,7 @@ class OverviewScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(ensureUserInitializedProvider);
     final remainingToSpend = ref.watch(remainingToSpendProvider);
     final dailyAllowance = ref.watch(dailySpendAllowanceProvider);
     final summary = ref.watch(currentMonthSummaryProvider);
