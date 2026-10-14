@@ -131,15 +131,19 @@ class BudgetsScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: AppTokens.white,
                               borderRadius: BorderRadius.circular(
-                                AppTokens.radiusPill,
+                                AppTokens.radiusButton,
                               ),
                             ),
                             child: Text(
-                              'Đã dùng ${((totalSpent / totalPlanned) * 100).toInt()}%',
-                              style: const TextStyle(
+                              totalPlanned > 0
+                                  ? 'Đã dùng ${((totalSpent / totalPlanned) * 100).toInt()}%'
+                                  : 'Chưa đặt ngân sách',
+                              style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: AppTokens.weightBold,
-                                color: AppTokens.signalOrange,
+                                color: totalPlanned > 0
+                                    ? AppTokens.signalOrange
+                                    : AppTokens.slateGray,
                               ),
                             ),
                           ),
@@ -210,12 +214,10 @@ class BudgetsScreen extends ConsumerWidget {
 
             // Danh sách các danh mục ngân sách
             if (budgets.isEmpty)
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: EmptyStateView(
                   message: AppStrings.emptyBudgets,
                   icon: Icons.pie_chart_outline_rounded,
-                  actionLabel: AppStrings.setBudget,
-                  onAction: () => SetBudgetSheet.show(context),
                 ),
               )
             else
@@ -320,7 +322,9 @@ class BudgetsScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Text(
-                                  '${((spent / budget.plannedAmount) * 100).toInt()}%',
+                                  budget.plannedAmount > 0
+                                      ? '${((spent / budget.plannedAmount) * 100).toInt()}%'
+                                      : '0%',
                                   style: const TextStyle(
                                     fontSize: 11.5,
                                     color: AppTokens.slateGray,
@@ -337,7 +341,7 @@ class BudgetsScreen extends ConsumerWidget {
               ),
 
             const SliverToBoxAdapter(
-              child: SizedBox(height: AppTokens.space32),
+              child: SizedBox(height: AppTokens.space96),
             ),
           ],
         ),

@@ -143,7 +143,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
       decoration: const BoxDecoration(
         color: AppTokens.canvasCream,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTokens.radiusStadium),
+          top: Radius.circular(AppTokens.radiusSheet),
         ),
       ),
       padding: EdgeInsets.only(
@@ -215,7 +215,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                 },
               ),
             ),
-            const SizedBox(height: AppTokens.space16),
+            const SizedBox(height: AppTokens.space20),
 
             // Tên mục tiêu
             TextField(
@@ -226,11 +226,22 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                 fillColor: AppTokens.white,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppTokens.space16,
-                  vertical: 12.0,
+                  vertical: 14.0,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   borderSide: const BorderSide(color: AppTokens.dustTaupe),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+                  borderSide: const BorderSide(color: AppTokens.dustTaupe),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+                  borderSide: const BorderSide(
+                    color: AppTokens.inkBlack,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -244,7 +255,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
               ),
               decoration: BoxDecoration(
                 color: AppTokens.white,
-                borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                 border: Border.all(color: AppTokens.dustTaupe, width: 1.0),
               ),
               child: Row(
@@ -263,6 +274,12 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                       decoration: const InputDecoration(
                         hintText: '0',
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        filled: false,
+                        fillColor: Colors.transparent,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -318,7 +335,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                 ),
                 decoration: BoxDecoration(
                   color: AppTokens.white,
-                  borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   border: Border.all(color: AppTokens.dustTaupe, width: 1.0),
                 ),
                 child: Row(
@@ -354,7 +371,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: AppTokens.space20),
+            const SizedBox(height: AppTokens.space24),
 
             if (_errorMessage != null) ...<Widget>[
               Text(

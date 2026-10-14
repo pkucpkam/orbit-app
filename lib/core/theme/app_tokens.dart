@@ -110,14 +110,17 @@ abstract final class AppTokens {
   static const double space128 = 128.0;
 
   // ---------------------------------------------------------------------------
-  // Border Radius (DESIGN.md Section 5)
+  // Border Radius (Thống nhất hệ thống bo góc gọn gàng, liền mạch: 12px)
   // ---------------------------------------------------------------------------
 
   static const double radiusMicro = 4.0;
   static const double radiusSmall = 6.0;
-  static const double radiusButton = 20.0;
-  static const double radiusConsentButton = 24.0;
-  static const double radiusStadium = 40.0;
+  static const double radiusInput = 12.0;
+  static const double radiusCard = 12.0;
+  static const double radiusButton = 12.0;
+  static const double radiusConsentButton = 12.0;
+  static const double radiusSheet = 20.0;
+  static const double radiusStadium = 12.0;
   static const double radiusPill = 999.0;
 
   // ---------------------------------------------------------------------------

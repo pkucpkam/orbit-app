@@ -23,7 +23,7 @@ class PillChip extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+      borderRadius: BorderRadius.circular(AppTokens.radiusButton),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
@@ -32,7 +32,7 @@ class PillChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
           border: Border.all(color: borderColor, width: 1.0),
         ),
         child: Row(

@@ -141,7 +141,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
       decoration: const BoxDecoration(
         color: AppTokens.canvasCream,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTokens.radiusStadium),
+          top: Radius.circular(AppTokens.radiusSheet),
         ),
       ),
       padding: EdgeInsets.only(
@@ -305,7 +305,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
                   filled: true,
                   fillColor: AppTokens.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                    borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   ),
                 ),
               ),
@@ -318,7 +318,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
                   filled: true,
                   fillColor: AppTokens.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                    borderRadius: BorderRadius.circular(AppTokens.radiusInput),
                   ),
                 ),
               ),

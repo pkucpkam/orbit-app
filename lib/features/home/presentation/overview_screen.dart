@@ -5,9 +5,7 @@ import 'package:quy_dao/core/strings/app_strings.dart';
 import 'package:quy_dao/core/theme/app_tokens.dart';
 import 'package:quy_dao/core/widgets/amount_text.dart';
 import 'package:quy_dao/core/widgets/category_avatar.dart';
-import 'package:quy_dao/core/widgets/empty_state_view.dart';
 import 'package:quy_dao/core/widgets/orbit_progress_ring.dart';
-import 'package:quy_dao/core/widgets/pill_button.dart';
 import 'package:quy_dao/data/models/category.dart';
 import 'package:quy_dao/data/models/transaction.dart';
 import 'package:quy_dao/data/providers/app_state_providers.dart';
@@ -24,6 +22,11 @@ class OverviewScreen extends ConsumerWidget {
     final remainingToSpend = ref.watch(remainingToSpendProvider);
     final dailyAllowance = ref.watch(dailySpendAllowanceProvider);
     final summary = ref.watch(currentMonthSummaryProvider);
+    final monthKey = ref.watch(currentMonthKeyProvider);
+    final monthParts = monthKey.split('-');
+    final monthDisplay = monthParts.length >= 2
+        ? 'Tháng ${monthParts[1]}/${monthParts[0]}'
+        : monthKey;
     final goals = ref.watch(savingGoalsProvider);
     final recentTxs = ref.watch(recentTransactionsProvider);
     final categories = ref.watch(categoriesProvider);
@@ -101,6 +104,32 @@ class OverviewScreen extends ConsumerWidget {
                     Row(
                       children: <Widget>[
                         GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => context.push('/guide'),
+                          child: Container(
+                            width: 44.0,
+                            height: 44.0,
+                            margin: const EdgeInsets.only(
+                              right: AppTokens.space12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTokens.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTokens.dustTaupe,
+                                width: 1.5,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.help_outline_rounded,
+                              size: 22.0,
+                              color: AppTokens.inkBlack,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
                           onTap: () => context.push('/reports'),
                           child: Container(
                             width: 44.0,
@@ -125,6 +154,7 @@ class OverviewScreen extends ConsumerWidget {
                           ),
                         ),
                         GestureDetector(
+                          behavior: HitTestBehavior.opaque,
                           onTap: () => AuthSheet.show(context),
                           child: Container(
                             width: 44.0,
@@ -303,9 +333,9 @@ class OverviewScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          const Text(
-                            'Tháng 10/2026',
-                            style: TextStyle(
+                          Text(
+                            monthDisplay,
+                            style: const TextStyle(
                               fontFamily: AppTokens.fontFamilyPrimary,
                               fontSize: 13.0,
                               color: AppTokens.slateGray,
@@ -328,7 +358,7 @@ class OverviewScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: AppTokens.white,
                           borderRadius: BorderRadius.circular(
-                            AppTokens.radiusPill,
+                            AppTokens.radiusButton,
                           ),
                         ),
                         child: Row(
@@ -428,13 +458,15 @@ class OverviewScreen extends ConsumerWidget {
                     child: Row(
                       children: <Widget>[
                         OrbitProgressRing(
-                          progress:
-                              featuredGoal.savedAmount /
-                              featuredGoal.targetAmount,
+                          progress: featuredGoal.targetAmount > 0
+                              ? (featuredGoal.savedAmount /
+                                        featuredGoal.targetAmount)
+                                    .clamp(0.0, 1.0)
+                              : 0.0,
                           size: 76.0,
                           strokeWidth: 5.5,
                           child: Text(
-                            '${((featuredGoal.savedAmount / featuredGoal.targetAmount) * 100).toInt()}%',
+                            '${featuredGoal.targetAmount > 0 ? ((featuredGoal.savedAmount / featuredGoal.targetAmount) * 100).toInt() : 0}%',
                             style: const TextStyle(
                               fontFamily: AppTokens.fontFamilyPrimary,
                               fontWeight: AppTokens.weightBold,
@@ -458,7 +490,7 @@ class OverviewScreen extends ConsumerWidget {
                                     decoration: BoxDecoration(
                                       color: AppTokens.canvasCream,
                                       borderRadius: BorderRadius.circular(
-                                        AppTokens.radiusPill,
+                                        AppTokens.radiusButton,
                                       ),
                                     ),
                                     child: const Text(
@@ -502,62 +534,83 @@ class OverviewScreen extends ConsumerWidget {
                 ),
               ),
 
-            // Streak Ghi chép
+            // Banner Hướng dẫn sử dụng
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppTokens.space24,
                   vertical: AppTokens.space8,
                 ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTokens.space24,
-                    vertical: AppTokens.space16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTokens.liftedCream,
-                    borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-                    border: Border.all(
-                      color: AppTokens.dustTaupe.withValues(alpha: 0.6),
-                      width: 1.0,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+                  onTap: () => context.push('/guide'),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppTokens.space16),
+                    decoration: BoxDecoration(
+                      color: AppTokens.white,
+                      borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+                      border: Border.all(
+                        color: AppTokens.dustTaupe.withValues(alpha: 0.6),
+                        width: 1.0,
+                      ),
+                      boxShadow: AppTokens.shadowLevel1,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          const Text('🔥', style: TextStyle(fontSize: 22.0)),
-                          const SizedBox(width: AppTokens.space128 * 0.08),
-                          Column(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                            color: AppTokens.lightSignalOrange.withValues(
+                              alpha: 0.14,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppTokens.radiusButton,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.lightbulb_outline_rounded,
+                            size: 22.0,
+                            color: AppTokens.orbitOrange,
+                          ),
+                        ),
+                        const SizedBox(width: AppTokens.space12),
+                        const Expanded(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '${streak.currentStreak} ${AppStrings.streakDays}',
-                                style: const TextStyle(
+                                AppStrings.bannerGuideTitle,
+                                style: TextStyle(
                                   fontFamily: AppTokens.fontFamilyPrimary,
-                                  fontWeight: AppTokens.weightBold,
-                                  fontSize: 15.0,
+                                  fontSize: 14.5,
+                                  fontWeight: AppTokens.weightMedium,
                                   color: AppTokens.inkBlack,
                                 ),
                               ),
+                              SizedBox(height: 2.0),
                               Text(
-                                'Kỷ lục dài nhất: ${streak.longestStreak} ngày',
-                                style: const TextStyle(
+                                AppStrings.bannerGuideSubtitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: AppTokens.fontFamilyPrimary,
                                   fontSize: 12.0,
                                   color: AppTokens.slateGray,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      PillButton(
-                        label: AppStrings.streakToday,
-                        variant: PillButtonVariant.secondary,
-                        onPressed: () {},
-                      ),
-                    ],
+                        ),
+                        const SizedBox(width: AppTokens.space8),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppTokens.slateGray,
+                          size: 20.0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -602,11 +655,46 @@ class OverviewScreen extends ConsumerWidget {
             // Danh sách 5 giao dịch gần nhất
             if (recentTxs.isEmpty)
               SliverToBoxAdapter(
-                child: EmptyStateView(
-                  message: AppStrings.emptyTransactions,
-                  icon: Icons.receipt_long_outlined,
-                  actionLabel: AppStrings.addTransaction,
-                  onAction: () => AddTransactionSheet.show(context),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTokens.space24,
+                    vertical: AppTokens.space8,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppTokens.space20,
+                      horizontal: AppTokens.space16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTokens.white,
+                      borderRadius: BorderRadius.circular(
+                        AppTokens.radiusButton,
+                      ),
+                      border: Border.all(
+                        color: AppTokens.dustTaupe.withValues(alpha: 0.5),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: const Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.receipt_long_outlined,
+                          size: 32.0,
+                          color: AppTokens.dustTaupe,
+                        ),
+                        SizedBox(height: AppTokens.space8),
+                        Text(
+                          AppStrings.emptyTransactions,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: AppTokens.fontFamilyPrimary,
+                            fontSize: 13.5,
+                            color: AppTokens.slateGray,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               )
             else
@@ -634,7 +722,7 @@ class OverviewScreen extends ConsumerWidget {
               ),
 
             const SliverToBoxAdapter(
-              child: SizedBox(height: AppTokens.space32),
+              child: SizedBox(height: AppTokens.space96),
             ),
           ],
         ),
@@ -658,8 +746,8 @@ class _MetricPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.space16,
-        vertical: AppTokens.space16,
+        horizontal: AppTokens.space12,
+        vertical: AppTokens.space12,
       ),
       decoration: BoxDecoration(
         color: AppTokens.white,
@@ -674,14 +762,20 @@ class _MetricPill extends StatelessWidget {
         children: <Widget>[
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 12.0, color: AppTokens.slateGray),
           ),
           const SizedBox(height: 6.0),
-          AmountText(
-            amount: amount,
-            type: type,
-            fontSize: 14.0,
-            fontWeight: AppTokens.weightBold,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: AmountText(
+              amount: amount,
+              type: type,
+              fontSize: 14.0,
+              fontWeight: AppTokens.weightBold,
+            ),
           ),
         ],
       ),

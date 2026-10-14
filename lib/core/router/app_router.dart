@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quy_dao/core/strings/app_strings.dart';
 import 'package:quy_dao/features/budgets/presentation/budgets_screen.dart';
+import 'package:quy_dao/features/guide/presentation/guide_screen.dart';
 import 'package:quy_dao/features/home/presentation/overview_screen.dart';
 import 'package:quy_dao/features/reports/presentation/reports_screen.dart';
 import 'package:quy_dao/features/savings/presentation/savings_screen.dart';
@@ -87,6 +88,11 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/reports',
       builder: (context, state) => const ReportsScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/guide',
+      builder: (context, state) => const GuideScreen(),
     ),
   ],
 );

@@ -129,45 +129,33 @@ class SavingsScreen extends ConsumerWidget {
             ),
 
             // Nút Tạo mục tiêu + Tiêu đề
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
+                padding: EdgeInsets.fromLTRB(
                   AppTokens.space24,
                   AppTokens.space16,
                   AppTokens.space24,
                   AppTokens.space8,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      'Mục tiêu đang theo đuổi',
-                      style: TextStyle(
-                        fontFamily: AppTokens.fontFamilyPrimary,
-                        fontSize: 17.0,
-                        fontWeight: AppTokens.weightMedium,
-                        color: AppTokens.inkBlack,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    PillButton(
-                      label: AppStrings.newGoal,
-                      icon: const Icon(Icons.add, size: 16.0),
-                      onPressed: () {},
-                    ),
-                  ],
+                child: Text(
+                  'Mục tiêu đang theo đuổi',
+                  style: TextStyle(
+                    fontFamily: AppTokens.fontFamilyPrimary,
+                    fontSize: 17.0,
+                    fontWeight: AppTokens.weightMedium,
+                    color: AppTokens.inkBlack,
+                    letterSpacing: -0.3,
+                  ),
                 ),
               ),
             ),
 
             // Danh sách các mục tiêu
             if (goals.isEmpty)
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: EmptyStateView(
                   message: AppStrings.emptySavings,
                   icon: Icons.savings_outlined,
-                  actionLabel: AppStrings.newGoal,
-                  onAction: () => AddGoalSheet.show(context),
                 ),
               )
             else
@@ -178,7 +166,9 @@ class SavingsScreen extends ConsumerWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final goal = goals[index];
-                    final progress = goal.savedAmount / goal.targetAmount;
+                    final progress = goal.targetAmount > 0
+                        ? (goal.savedAmount / goal.targetAmount).clamp(0.0, 1.0)
+                        : 0.0;
                     final remainingDays = goal.targetDate
                         .difference(DateTime.now())
                         .inDays;
@@ -317,7 +307,7 @@ class SavingsScreen extends ConsumerWidget {
                                             alpha: 0.2,
                                           ),
                                     borderRadius: BorderRadius.circular(
-                                      AppTokens.radiusPill,
+                                      AppTokens.radiusButton,
                                     ),
                                     border: isReached
                                         ? Border.all(
@@ -386,7 +376,7 @@ class SavingsScreen extends ConsumerWidget {
               ),
 
             const SliverToBoxAdapter(
-              child: SizedBox(height: AppTokens.space32),
+              child: SizedBox(height: AppTokens.space96),
             ),
           ],
         ),

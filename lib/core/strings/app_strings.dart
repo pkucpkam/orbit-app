@@ -189,4 +189,78 @@ abstract final class AppStrings {
   static const String pleaseEnterAmount = 'Vui lòng nhập số tiền lớn hơn 0';
   static const String transactionSaved = 'Đã lưu giao dịch';
   static const String transactionDeleted = 'Đã xóa giao dịch';
+
+  // ---------------------------------------------------------------------------
+  // Hướng dẫn sử dụng & Step Tutorial
+  // ---------------------------------------------------------------------------
+  static const String userGuide = 'Hướng dẫn sử dụng';
+  static const String tutorialSteps = 'Hành trình từng bước';
+  static const String featureHandbook = 'Cẩm nang tính năng';
+  static const String skipGuide = 'Bỏ qua';
+  static const String previousStep = 'Quay lại';
+  static const String nextStep = 'Tiếp tục';
+  static const String getStarted = 'Bắt đầu ngay';
+  static const String bannerGuideTitle = 'Khám phá Quỹ Đạo';
+  static const String bannerGuideSubtitle =
+      'Tìm hiểu cách vận hành vòng quỹ đạo, ngân sách & tích lũy';
+  static const String viewGuide = 'Xem hướng dẫn';
+
+  // Bước 1: Triết lý Quỹ Đạo
+  static const String guideStep1Badge = '1. Triết lý Quỹ Đạo';
+  static const String guideStep1Title = 'Vòng Quỹ Đạo Tài Chính';
+  static const String guideStep1Desc =
+      'Quỹ Đạo giúp bạn trực quan hóa tốc độ chi tiêu so với thời gian trong tháng. Vòng màu cam biểu thị tiến độ ngân sách, giúp bạn luôn chủ động trước khi tiền kịp cạn.';
+  static const String guideStep1Tip =
+      'Mẹo: Quan sát chỉ số "Chi được mỗi ngày" để biết hôm nay bạn có thể tiêu tối đa bao nhiêu mà vẫn an toàn.';
+
+  // Bước 2: Ghi chép Thu & Chi
+  static const String guideStep2Badge = '2. Ghi chép tức thì';
+  static const String guideStep2Title = 'Thêm Giao Dịch Trong 5 Giây';
+  static const String guideStep2Desc =
+      'Chỉ một chạm vào nút (+) để ghi nhận Chi tiêu, Thu nhập, Chuyển ví hoặc Gửi tiết kiệm. Hỗ trợ đa dạng nguồn tiền: Tiền mặt, Ngân hàng, Ví điện tử.';
+  static const String guideStep2Tip =
+      'Mẹo: Đặt thói quen ghi nhận ngay sau khi thanh toán hoặc tổng kết nhanh vào 21:00 mỗi tối.';
+
+  // Bước 3: Ngân Sách Dự Tính
+  static const String guideStep3Badge = '3. Kế hoạch ngân sách';
+  static const String guideStep3Title = 'Dự Tính & Hạn Mức Ngày';
+  static const String guideStep3Desc =
+      'Phân bổ hạn mức chi cho từng danh mục thiết yếu như Ăn uống, Mua sắm, Di chuyển. Đầu tháng mới, bạn có thể sao chép toàn bộ kế hoạch từ tháng trước chỉ với 1 chạm.';
+  static const String guideStep3Tip =
+      'Mẹo: Khi đạt 80% ngân sách, hệ thống sẽ gửi nhắc nhở trung tính, tôn trọng để bạn chủ động cân đối.';
+
+  // Bước 4: Tích Lũy Cột Mốc
+  static const String guideStep4Badge = '4. Tích lũy thông minh';
+  static const String guideStep4Title = '4 Cột Mốc Quỹ Đạo';
+  static const String guideStep4Desc =
+      'Chia nhỏ mục tiêu lớn thành 4 trạm: 25%, 50%, 75% và 100%. Mỗi khi nạp thêm tiền và cán mốc, Quỹ Đạo sẽ chúc mừng và tạo thêm động lực.';
+  static const String guideStep4Tip =
+      'Mẹo: Thiết lập ngày hết hạn để Quỹ Đạo tự động tính số tiền cần gom mỗi tháng.';
+
+  // Bước 5: Báo Cáo & Phân Tích
+  static const String guideStep5Badge = '5. Báo cáo trực quan';
+  static const String guideStep5Title = 'Báo Cáo & Phân Tích Dòng Tiền';
+  static const String guideStep5Desc =
+      'Theo dõi cơ cấu chi tiêu qua biểu đồ hình tròn và phân tích dòng tiền Thu - Chi theo Tháng, Quý, Năm để nhìn rõ bức tranh tài chính toàn diện.';
+  static const String guideStep5Tip =
+      'Mẹo: Bấm biểu tượng biểu đồ tròn ở góc trên màn hình Tổng quan để xem báo cáo chi tiết mọi lúc.';
+
+  // FAQ Section
+  static const String faqSectionTitle = 'Câu hỏi thường gặp (FAQ)';
+  static const String faq1Question =
+      'Chỉ số "Chi được mỗi ngày" được tính như thế nào?';
+  static const String faq1Answer =
+      'Bằng tổng ngân sách còn lại trong tháng chia cho số ngày còn lại của chu kỳ. Chi tiêu ít hơn con số này sẽ giúp bạn đảm bảo số dư vào cuối tháng.';
+  static const String faq2Question =
+      'Ứng dụng có dùng được khi mất kết nối mạng (offline) không?';
+  static const String faq2Answer =
+      'Hoàn toàn được. Mọi giao dịch được lưu cục bộ tức thì và tự động đồng bộ lên đám mây khi điện thoại có kết nối trở lại.';
+  static const String faq3Question =
+      'Làm sao để sao chép ngân sách sang tháng mới?';
+  static const String faq3Answer =
+      'Tại tab Ngân sách, chuyển sang tháng mới và nhấn nút "Sao chép từ tháng trước" để giữ nguyên kế hoạch chi tiêu nhanh chóng.';
+  static const String faq4Question =
+      'Các cột mốc tích lũy 25%, 50%, 75% hoạt động ra sao?';
+  static const String faq4Answer =
+      'Khi bạn nạp tiền vào mục tiêu tiết kiệm, hệ thống tính toán tỷ lệ hoàn thành và kích hoạt lời chúc mừng khích lệ khi vượt qua từng cột mốc.';
 }

@@ -109,9 +109,7 @@ abstract final class AppTheme {
         elevation: AppTokens.elevationFlat,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppTokens.radiusStadium),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(AppTokens.radiusCard)),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -119,7 +117,9 @@ abstract final class AppTheme {
           backgroundColor: AppTokens.inkBlack,
           foregroundColor: AppTokens.canvasCream,
           elevation: AppTokens.elevationFlat,
-          shape: const StadiumBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppTokens.space24,
             vertical: 14.0,
@@ -138,7 +138,9 @@ abstract final class AppTheme {
           foregroundColor: AppTokens.inkBlack,
           elevation: AppTokens.elevationFlat,
           side: const BorderSide(color: AppTokens.inkBlack, width: 1.5),
-          shape: const StadiumBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppTokens.space24,
             vertical: 14.0,
@@ -154,7 +156,9 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppTokens.inkBlack,
-          shape: const StadiumBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppTokens.space16,
             vertical: 8.0,
@@ -167,7 +171,11 @@ abstract final class AppTheme {
         ),
       ),
       chipTheme: const ChipThemeData(
-        shape: StadiumBorder(),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(AppTokens.radiusButton),
+          ),
+        ),
         backgroundColor: AppTokens.white,
         selectedColor: AppTokens.inkBlack,
         side: BorderSide(color: AppTokens.dustTaupe, width: 1.0),
@@ -192,23 +200,23 @@ abstract final class AppTheme {
         filled: true,
         fillColor: AppTokens.white,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTokens.space24,
-          vertical: 16.0,
+          horizontal: AppTokens.space16,
+          vertical: 14.0,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
           borderSide: const BorderSide(color: AppTokens.dustTaupe, width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
           borderSide: const BorderSide(color: AppTokens.dustTaupe, width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
           borderSide: const BorderSide(color: AppTokens.inkBlack, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTokens.radiusPill),
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
           borderSide: const BorderSide(
             color: AppTokens.semanticBudgetExceeded,
             width: 1.5,
