@@ -62,6 +62,43 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
     }
   }
 
+  String _parseAuthError(Object error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'operation-not-allowed':
+          return AppStrings.authOperationNotAllowed;
+        case 'weak-password':
+          return AppStrings.authWeakPassword;
+        case 'email-already-in-use':
+          return AppStrings.authEmailInUse;
+        case 'invalid-email':
+          return AppStrings.authInvalidEmail;
+        case 'user-not-found':
+          return AppStrings.authUserNotFound;
+        case 'wrong-password':
+        case 'invalid-credential':
+          return AppStrings.authWrongPassword;
+        case 'network-request-failed':
+          return AppStrings.authNetworkError;
+        default:
+          final msg = error.message ?? '';
+          if (msg.contains('CONFIGURATION_NOT_FOUND') ||
+              error.toString().contains('CONFIGURATION_NOT_FOUND')) {
+            return AppStrings.authConfigNotFound;
+          }
+          return msg.isNotEmpty ? msg : AppStrings.authUnknownError;
+      }
+    }
+    final str = error.toString();
+    if (str.contains('CONFIGURATION_NOT_FOUND')) {
+      return AppStrings.authConfigNotFound;
+    }
+    if (str.contains('GoogleSignInException')) {
+      return AppStrings.authGoogleFailed;
+    }
+    return str;
+  }
+
   Future<void> _signInWithGoogle() async {
     setState(() {
       _isLoading = true;
@@ -73,7 +110,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        setState(() => _errorMessage = e.toString());
+        setState(() => _errorMessage = _parseAuthError(e));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -91,7 +128,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        setState(() => _errorMessage = e.toString());
+        setState(() => _errorMessage = _parseAuthError(e));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -101,7 +138,19 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
   Future<void> _submitEmailAuth() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
-    if (email.isEmpty || password.isEmpty) return;
+
+    if (email.isEmpty) {
+      setState(() => _errorMessage = AppStrings.enterEmail);
+      return;
+    }
+    if (password.isEmpty) {
+      setState(() => _errorMessage = AppStrings.enterPassword);
+      return;
+    }
+    if (_isSignUp && password.length < 6) {
+      setState(() => _errorMessage = AppStrings.passwordMinLength);
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -116,7 +165,7 @@ class _AuthSheetState extends ConsumerState<AuthSheet> {
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        setState(() => _errorMessage = e.toString());
+        setState(() => _errorMessage = _parseAuthError(e));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

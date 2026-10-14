@@ -4,7 +4,7 @@ abstract final class AppStrings {
   // ---------------------------------------------------------------------------
   // Tên ứng dụng & Định danh
   // ---------------------------------------------------------------------------
-  static const String appName = 'Quỹ Đạo';
+  static const String appName = 'Orbit';
   static const String appTagline = 'Quản lý thu chi & tích lũy theo quỹ đạo';
 
   // ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ abstract final class AppStrings {
   // ---------------------------------------------------------------------------
   // Thông báo & Cảnh báo (Local Notifications)
   // ---------------------------------------------------------------------------
-  static const String notificationChannelName = 'Quỹ Đạo';
+  static const String notificationChannelName = 'Orbit';
   static const String notificationChannelDesc =
       'Nhắc nhở ghi chép hằng ngày và cảnh báo ngân sách';
   static const String dailyReminderTitle = 'Đã đến giờ tổng kết ngày';
@@ -174,6 +174,27 @@ abstract final class AppStrings {
   static const String signOut = 'Đăng xuất';
   static const String deleteAccount = 'Xóa tài khoản';
   static const String profile = 'Hồ sơ';
+  static const String enterEmail = 'Vui lòng nhập địa chỉ email.';
+  static const String enterPassword = 'Vui lòng nhập mật khẩu.';
+  static const String passwordMinLength = 'Mật khẩu phải có ít nhất 6 ký tự.';
+  static const String authConfigNotFound =
+      'Dịch vụ xác thực chưa được kích hoạt trên Firebase Console. Vui lòng bật Sign-in method.';
+  static const String authOperationNotAllowed =
+      'Phương thức đăng nhập này chưa được kích hoạt trong Firebase Console.';
+  static const String authWeakPassword =
+      'Mật khẩu quá yếu (yêu cầu tối thiểu 6 ký tự).';
+  static const String authEmailInUse =
+      'Email này đã được đăng ký tài khoản trước đó.';
+  static const String authInvalidEmail = 'Địa chỉ email không đúng định dạng.';
+  static const String authUserNotFound = 'Tài khoản không tồn tại.';
+  static const String authWrongPassword =
+      'Mật khẩu hoặc thông tin đăng nhập không chính xác.';
+  static const String authNetworkError =
+      'Lỗi kết nối mạng, vui lòng kiểm tra lại đường truyền.';
+  static const String authGoogleFailed =
+      'Đăng nhập Google thất bại. Vui lòng kiểm tra SHA-1 và cấu hình Firebase.';
+  static const String authUnknownError =
+      'Đã xảy ra lỗi xác thực. Vui lòng thử lại sau.';
 
   // ---------------------------------------------------------------------------
   // Biểu mẫu nhập liệu & Thao tác
@@ -200,7 +221,7 @@ abstract final class AppStrings {
   static const String previousStep = 'Quay lại';
   static const String nextStep = 'Tiếp tục';
   static const String getStarted = 'Bắt đầu ngay';
-  static const String bannerGuideTitle = 'Khám phá Quỹ Đạo';
+  static const String bannerGuideTitle = 'Khám phá Orbit';
   static const String bannerGuideSubtitle =
       'Tìm hiểu cách vận hành vòng quỹ đạo, ngân sách & tích lũy';
   static const String viewGuide = 'Xem hướng dẫn';

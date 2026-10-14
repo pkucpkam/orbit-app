@@ -61,15 +61,17 @@ class FirebaseAuthRepository implements AuthRepository {
   FirebaseAuthRepository({
     required FirebaseAuth auth,
     required FirebaseFirestore firestore,
+    this.serverClientId,
   }) : _auth = auth,
        _firestore = firestore;
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+  final String? serverClientId;
 
   @override
   Future<UserCredential> signInWithGoogle() async {
-    await GoogleSignIn.instance.initialize();
+    await GoogleSignIn.instance.initialize(serverClientId: serverClientId);
     final googleUser = await GoogleSignIn.instance.authenticate();
     final googleAuth = googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
@@ -169,10 +171,20 @@ class FirebaseAuthRepository implements AuthRepository {
 // Riverpod Provider
 // ---------------------------------------------------------------------------
 
+/// Provider cấu hình OAuth Web Client ID cho Google Sign-In (serverClientId).
+///
+/// Tránh hardcode secret/client ID trong mã nguồn; hỗ trợ cấu hình qua cờ:
+/// `--dart-define=GOOGLE_SERVER_CLIENT_ID=...`
+final googleServerClientIdProvider = Provider<String?>((ref) {
+  const clientId = String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  return clientId.isNotEmpty ? clientId : null;
+});
+
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => FirebaseAuthRepository(
     auth: ref.watch(firebaseAuthProvider) ?? FirebaseAuth.instance,
     firestore: ref.watch(firestoreProvider),
+    serverClientId: ref.watch(googleServerClientIdProvider),
   ),
   name: 'authRepositoryProvider',
 );

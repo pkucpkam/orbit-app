@@ -85,17 +85,20 @@ class FirestoreGoalRepository implements GoalRepository {
       _firestore.collection(FirestorePaths.goalsCollection(uid));
 
   @override
-  Stream<List<SavingGoal>> watchActiveGoals(String uid) => _col(uid)
-      .where('status', isEqualTo: 'active')
-      .orderBy('startDate', descending: true)
-      .snapshots()
-      .map((s) => s.docs.map(_fromDoc).toList());
+  Stream<List<SavingGoal>> watchActiveGoals(String uid) =>
+      _col(uid).where('status', isEqualTo: 'active').snapshots().map((s) {
+        final list = s.docs.map(_fromDoc).toList();
+        list.sort((a, b) => b.startDate.compareTo(a.startDate));
+        return list;
+      });
 
   @override
-  Stream<List<SavingGoal>> watchAllGoals(String uid) => _col(uid)
-      .orderBy('startDate', descending: true)
-      .snapshots()
-      .map((s) => s.docs.map(_fromDoc).toList());
+  Stream<List<SavingGoal>> watchAllGoals(String uid) =>
+      _col(uid).snapshots().map((s) {
+        final list = s.docs.map(_fromDoc).toList();
+        list.sort((a, b) => b.startDate.compareTo(a.startDate));
+        return list;
+      });
 
   @override
   Future<String> createGoal(String uid, SavingGoal goal) async {

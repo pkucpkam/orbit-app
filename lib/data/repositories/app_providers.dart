@@ -38,6 +38,8 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
 
 /// Provider trả về UID của user hiện tại (`null` nếu chưa đăng nhập).
 final currentUidProvider = Provider<String?>((ref) {
+  final user = ref.watch(authStateChangesProvider).asData?.value;
+  if (user != null) return user.uid;
   final auth = ref.watch(firebaseAuthProvider);
   return auth?.currentUser?.uid;
 }, name: 'currentUidProvider');

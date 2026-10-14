@@ -174,22 +174,26 @@ class FirestoreCategoryRepository implements CategoryRepository {
 
   @override
   Stream<List<Category>> watchCategories(String uid, {String? type}) {
-    Query<Map<String, dynamic>> query = _col(
-      uid,
-    ).where('archived', isEqualTo: false);
-    if (type != null) query = query.where('type', isEqualTo: type);
-    return query
-        .orderBy('order')
-        .snapshots()
-        .map((s) => s.docs.map(_fromDoc).toList());
+    return _col(uid).snapshots().map((s) {
+      final list =
+          s.docs
+              .map(_fromDoc)
+              .where((c) => !c.archived && (type == null || c.type == type))
+              .toList()
+            ..sort((a, b) => a.order.compareTo(b.order));
+      return list;
+    });
   }
 
   @override
-  Stream<List<Category>> watchAllCategories(String uid) => _col(uid)
-      .orderBy('type')
-      .orderBy('order')
-      .snapshots()
-      .map((s) => s.docs.map(_fromDoc).toList());
+  Stream<List<Category>> watchAllCategories(String uid) =>
+      _col(uid).snapshots().map(
+        (s) => s.docs.map(_fromDoc).toList()
+          ..sort((a, b) {
+            final typeCmp = a.type.compareTo(b.type);
+            return typeCmp != 0 ? typeCmp : a.order.compareTo(b.order);
+          }),
+      );
 
   @override
   Future<String> saveCategory(String uid, Category category) async {

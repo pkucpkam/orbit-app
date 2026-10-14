@@ -18,6 +18,7 @@ import 'package:quy_dao/data/repositories/app_providers.dart';
 import 'package:quy_dao/data/repositories/budget_repository.dart';
 import 'package:quy_dao/data/repositories/goal_repository.dart';
 import 'package:quy_dao/data/repositories/transaction_repository.dart';
+import 'package:quy_dao/data/repositories/wallet_repository.dart';
 import 'package:quy_dao/features/auth/presentation/auth_sheet.dart';
 import 'package:quy_dao/features/savings/presentation/milestone_celebration_dialog.dart';
 
@@ -102,18 +103,6 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
       return;
     }
 
-    final wallets = ref.read(walletsProvider);
-    final wallet =
-        _selectedWallet ??
-        (wallets.isNotEmpty
-            ? wallets.first
-            : const Wallet(
-                id: 'default_cash',
-                name: 'Tiền mặt',
-                type: 'cash',
-                balance: 0,
-              ));
-
     final startDay = ref.read(monthStartDayProvider);
     final monthKey = monthKeyFor(_selectedDate, startDay);
 
@@ -123,6 +112,21 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
     });
 
     try {
+      final wallets = ref.read(walletsProvider);
+      String walletId;
+      if (_selectedWallet != null) {
+        walletId = _selectedWallet!.id;
+      } else if (wallets.isNotEmpty) {
+        walletId = wallets.first.id;
+      } else {
+        walletId = await ref
+            .read(walletRepositoryProvider)
+            .createWallet(
+              uid,
+              const Wallet(id: '', name: 'Tiền mặt', type: 'cash', balance: 0),
+            );
+      }
+
       final goals = ref.read(savingGoalsProvider);
       final goalId = _selectedType == 'saving'
           ? (_selectedGoal?.id ?? widget.initialGoalId)
@@ -175,7 +179,7 @@ class _AddTransactionSheetState extends ConsumerState<AddTransactionSheet> {
         type: _selectedType,
         amount: amount,
         categoryId: _selectedCategory?.id ?? '',
-        walletId: wallet.id,
+        walletId: walletId,
         toWalletId: _selectedType == 'transfer' ? _selectedToWallet?.id : null,
         goalId: goalId,
         note: _noteController.text.trim(),
